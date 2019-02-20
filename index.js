@@ -1,4 +1,5 @@
-function createStore(){
+//Library
+function createStore(reducer){
 //The store should have four parts:
 //1. The state
 //2. Get the state
@@ -17,8 +18,23 @@ function createStore(){
         }
     }
 
+    const dispatch = (action) => {
+        state = reducer(state, action)
+        listeners.forEach((listener) => listener())
+    }
+    
     return {
         getState,
-        subscribe
+        subscribe, 
+        dispatch,
     }
+}
+
+//this is a reducer function
+//App code
+function todos(state = [], action){
+    if(action.type === 'ADD_TODO'){
+       return state.concat([action.todo])
+    }
+    return state
 }
