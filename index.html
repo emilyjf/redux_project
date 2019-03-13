@@ -3,6 +3,8 @@
         <title>To-dos and goals</title>
         <meta charset="windows-1252">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
+
     </head>
     <body>
         <div>
@@ -20,38 +22,6 @@
         <script type='text/javascript'>
             function generateId () {
                 return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
-            }
-            
-            //Library
-            function createStore(reducer){
-            //The store should have four parts:
-            //1. The state
-            //2. Get the state
-            //3. Listen to changes on the state
-            //4. Update the state
-
-                let state
-                let listeners = []
-
-                const getState = () => state
-
-                const subscribe = (listener) => {
-                    listeners.push(listener)
-                    return () => {
-                        listeners = listeners.filter((l) => l !== listener)
-                    }
-                }
-
-                const dispatch = (action) => {
-                    state = reducer(state, action)
-                    listeners.forEach((listener) => listener())
-                }
-
-                return {
-                    getState,
-                    subscribe, 
-                    dispatch,
-                }
             }
 
             //app code
@@ -129,21 +99,19 @@
                         return state.concat([action.goal])
                     case REMOVE_GOAL :
                         return state.filter((goal) => goal.id !== action.id)
+                     case TOGGLE_GOAL :
+                        state.map((goal) => goal.id !== action.id ? goal :
+                        Object.assign({}, goal, { complete: !goal.complete }))
                     default:
                         return state
                 }
             }
 
-            //acts as a "root" reducer
-            function app (state = {}, action){
-                return {
-                    todos: todos(state.todos, action),
-                    goals: goals(state.goals, action),
-                }
-            }
-
             //only need to pass in a single reducer here
-            const store = createStore(app)
+            const store = Redux.createStore(Redux.combineReducers({
+                todos,
+                goals,
+            }))
 
             store.subscribe(() => {
                 const { todos, goals } = store.getState()
@@ -203,7 +171,7 @@
             
             node.appendChild(text)
             node.appendChild(removeBtn)
-            node.style.TextDecoration = todo.complete ? 'line-through' : 'none'
+            node.style.textDecoration = todo.complete ? 'line-through' : 'none'
             node.addEventListener('click', () => {
                 store.dispatch(toggleTodoAction(todo.id))
             })
@@ -222,7 +190,7 @@
             
             node.appendChild(text)
             node.appendChild(removeBtn)
-            node.style.TextDecoration = goal.complete ? 'line-through' : 'none'
+            node.style.textDecoration = goal.complete ? 'line-through' : 'none'
             node.addEventListener('click', () => {
                 store.dispatch(toggleGoalAction(goal.id))
             })
