@@ -26,12 +26,11 @@ function createStore(reducer){
     return {
         getState,
         subscribe, 
-        dispatch,
+        dispatch
     }
 }
 
 //this is a reducer function
-//App code
 function todos(state = [], action){
     switch(action.type){
         case 'ADD_TODO' :
@@ -49,7 +48,7 @@ function todos(state = [], action){
 
 //another reducer function
 function goals (state = [], action){
-    switch(action.type){
+    switch(action.type) {
         case 'ADD_GOAL' :
             return state.concat([action.goal])
         case 'REMOVE_GOAL' :
@@ -59,8 +58,16 @@ function goals (state = [], action){
     }
 }
 
+//acts as a "root" reducer
+function app (state = {}, action){
+    return {
+        todos: todos(state.todos, action),
+        goals: goals(state.goals, action),
+    }
+}
+
 //only need to pass in a single reducer here
-const store = createStore(todos)
+const store = createStore(app);
 
 store.subscribe(() => {
     console.log('The new state is: ', store.getState())
