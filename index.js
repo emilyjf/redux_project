@@ -46,6 +46,20 @@ function todos(state = [], action){
     }
 }
 
+
+//another reducer function
+function goals (state = [], action){
+    switch(action.type){
+        case 'ADD_GOAL' :
+            return state.concat([action.goal])
+        case 'REMOVE_GOAL' :
+            return state.filter((goal) => goal.id !== action.id)
+        default:
+            return state
+    }
+}
+
+//only need to pass in a single reducer here
 const store = createStore(todos)
 
 store.subscribe(() => {
