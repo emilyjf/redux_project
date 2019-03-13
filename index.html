@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <title>To-dos goals</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>To-do: write content</div>
+        
+        <script type='text/javascript'>
+            //Library
+            function createStore(reducer){
+            //The store should have four parts:
+            //1. The state
+            //2. Get the state
+            //3. Listen to changes on the state
+            //4. Update the state
+
+                let state
+                let listeners = []
+
+                const getState = () => state
+
+                const subscribe = (listener) => {
+                    listeners.push(listener)
+                    return () => {
+                        listeners = listeners.filter((l) => !== listener)
+                    }
+                }
+
+                const dispatch = (action) => {
+                    state = reducer(state, action)
+                    listeners.forEach((listener) => listener())
+                }
+
+                return {
+                    getState,
+                    subscribe, 
+                    dispatch,
+                }
+            }
+
+            //app code
+            const ADD_TODO = 'ADD_TODO'
+            const REMOVE_TODO = 'REMOVE_TODO'
+            const TOGGLE_TODO = 'TOGGLE_TODO'
+            const ADD_GOAL = 'ADD_GOAL'
+            const REMOVE_GOAL = 'REMOVE_GOAL'
+
+            //action creators below 
+            function addTodoAction (todo) {
+                return {
+                    type: ADD_TODO,
+                    todo,
+                }
+            }
+
+            function removeTodoAction (id) {
+                return {
+                    type: REMOVE_TODO,
+                    id,
+                }
+            }
+
+            function toggleTodoAction (id) {
+                return {
+                    type: TOGGLE_TODO,
+                    id,
+                }
+            }
+
+            function addGoalAction (goal) {
+                return {
+                    type: ADD_GOAL,
+                    goal,
+                }
+            }
+
+            function removeGoalAction (id) {
+                return {
+                    type: REMOVE_GOAL,
+                    id,
+                }
+            }
+
+            //this is a reducer function
+            function todos(state = [], action){
+                switch(action.type){
+                    case ADD_TODO :
+                      return state.concat([action.todo])
+                    case REMOVE_TODO :
+                        return state.filter((todo) => todo.id !== action.id)
+                    case TOGGLE_TODO :
+                        state.map((todo) => todo.id !== action.id ? todo :
+                        Object.assign({}, todo, { complete: !todo.complete }))
+                    default:
+                        return state
+                }
+            }
+
+
+            //another reducer function
+            function goals (state = [], action){
+                switch(action.type) {
+                    case ADD_GOAL :
+                        return state.concat([action.goal])
+                    case REMOVE_GOAL :
+                        return state.filter((goal) => goal.id !== action.id)
+                    default:
+                        return state
+                }
+            }
+
+            //acts as a "root" reducer
+            function app (state = {}, action){
+                return {
+                    todos: todos(state.todos, action),
+                    goals: goals(state.goals, action),
+                }
+            }
+
+            //only need to pass in a single reducer here
+            const store = createStore(app);
+
+            store.subscribe(() => {
+                console.log('The new state is: ', store.getState())
+            })
+
+            store.dispatch(addTodoAction({
+                  id: 0,
+                  name: 'Learn Redux',
+                  complete: false
+                }))
+
+            store.dispatch(removeTodoAction(1))
+
+            store.dispatch(toggleTodoAction(0))
+
+            store.dispatch(addGoalAction({
+                  id: 0,
+                  name: 'Learn Redux'
+            }))
+
+            store.dispatch(removeGoalAction(0))
+    
+        </script>
+    </body>
+</html>
