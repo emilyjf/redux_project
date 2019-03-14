@@ -244,22 +244,61 @@
             }                           
             
             class Todos extends React.Component{
+                
+                addItem = (e) => {
+                    e.preventDefault()
+                    const name = this.input.value
+                    this.input.value = ''
+                    
+                    this.props.store.dispatch(addTodoAction({
+                        name,
+                        complete: false,
+                        id: generateId()
+                    }))
+                }
+                
                 render(){
                     return(
                         <div>
-                        TODOS
-                            <List />
+                        <h1>To-do list</h1>
+                        <input 
+                            type='text'
+                            placeholder='Add to-do'
+                            ref={(input) => this.input = input}
+                        />
+                        <button onClick={this.addItem}>Add to-do</button>
+                        
+                        <List />
                         </div>
                     )
                 }
             }
             
             class Goals extends React.Component{
+                
+                addItem = (e) => {
+                    e.preventDefault()
+                    const name = this.input.value
+                    this.input.value = ''
+                    
+                    this.props.store.dispatch(addGoalAction({
+                        id: generateId(),
+                        name,
+                    }))
+                }
+                
                 render(){
                     return(
                         <div>
-                        Goals
-                            <List />
+                        <h1>Goals</h1>
+                        <input 
+                            type='text'
+                            placeholder='Add goal'
+                            ref={(input) => this.input = input}
+                        />
+                        <button onClick={this.addItem}>Add goal</button>
+                                
+                        <List />
                         </div>
                     )
                 }
@@ -270,15 +309,15 @@
                 render(){
                     return(
                         <div>
-                            <Todos />
-                            <Goals />
+                            <Todos store={this.props.store} />
+                            <Goals store={this.props.store} />
                         </div>
                     )
                 }
             }
             
             ReactDOM.render(
-                <App />,
+                <App store={store} />,
                 document.getElementById('app')
             )
         </script>
