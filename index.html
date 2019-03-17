@@ -238,7 +238,16 @@
             function List(props){
                 return(
                     <ul>
-                        <li>LIST</li>
+                        {props.items.map((item) => (
+                            <li key={item.id}>       
+                                <span>
+                                    {item.name}
+                                </span>
+                                <button onClick={() => props.remove(item)}>
+                                    X
+                                </button>
+                            </li>
+                        ))}
                     </ul>
                 )
             }                           
@@ -257,18 +266,25 @@
                     }))
                 }
                 
+                removeItem = (todo) => {
+                   this.props.store.dispatch(removeTodoAction(todo.id)) 
+                }
+                
                 render(){
                     return(
                         <div>
-                        <h1>To-do list</h1>
-                        <input 
-                            type='text'
-                            placeholder='Add to-do'
-                            ref={(input) => this.input = input}
-                        />
-                        <button onClick={this.addItem}>Add to-do</button>
-                        
-                        <List />
+                            <h1>To-do list</h1>
+                            <input 
+                                type='text'
+                                placeholder='Add to-do'
+                                ref={(input) => this.input = input}
+                            />
+                            <button onClick={this.addItem}>Add to-do</button>
+
+                            <List 
+                                    items={this.props.todos}
+                                    remove={this.removeItem}  
+                            />
                         </div>
                     )
                 }
@@ -287,18 +303,25 @@
                     }))
                 }
                 
+                removeItem = (goal) => {
+                   this.props.store.dispatch(removeGoalAction(goal.id)) 
+                }
+                
                 render(){
                     return(
                         <div>
-                        <h1>Goals</h1>
-                        <input 
-                            type='text'
-                            placeholder='Add goal'
-                            ref={(input) => this.input = input}
-                        />
-                        <button onClick={this.addItem}>Add goal</button>
-                                
-                        <List />
+                            <h1>Goals</h1>
+                            <input 
+                                type='text'
+                                placeholder='Add goal'
+                                ref={(input) => this.input = input}
+                            />
+                            <button onClick={this.addItem}>Add goal</button>
+
+                            <List 
+                                items={this.props.goals}
+                                remove={this.removeItem}  
+                            />
                         </div>
                     )
                 }
